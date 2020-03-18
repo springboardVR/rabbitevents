@@ -5,7 +5,7 @@ namespace Nuwber\Events\Facades;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Eloquent\Model;
-use Nuwber\Support\Testing\RabbitEventFake;
+use Nuwber\Events\Support\Testing\RabbitEventFake;
 
 /**
  * @see \Nuwber\Events\Dispatcher

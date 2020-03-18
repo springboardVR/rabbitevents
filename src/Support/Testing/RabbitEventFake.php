@@ -1,6 +1,6 @@
 <?php
 
-namespace Nuwber\Support\Testing;
+namespace Nuwber\Events\Support\Testing;
 
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\Assert as PHPUnit;
