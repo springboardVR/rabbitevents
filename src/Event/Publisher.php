@@ -2,21 +2,23 @@
 
 namespace Nuwber\Events\Event;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\InteractsWithTime;
-use Interop\Amqp\AmqpMessage;
-use Interop\Amqp\AmqpProducer;
-use Interop\Amqp\AmqpTopic;
-use Interop\Amqp\AmqpContext;
-use Interop\Queue\Exception;
-use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
-use Interop\Queue\Exception\InvalidDestinationException;
-use Interop\Queue\Exception\InvalidMessageException;
 use ReflectionClass;
+use Illuminate\Support\Arr;
+use Interop\Amqp\AmqpTopic;
+use Interop\Queue\Exception;
+use Interop\Amqp\AmqpMessage;
+use Interop\Amqp\AmqpContext;
+use Interop\Amqp\AmqpProducer;
+use Illuminate\Support\InteractsWithTime;
+use Nuwber\Events\Support\Testing\PublisherFake;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 
 class Publisher
 {
     use InteractsWithTime;
+
     /**
      * @var AmqpTopic
      */
@@ -34,10 +36,36 @@ class Publisher
     }
 
     /**
+     * Replace the bound instance with a fake.
+     *
+     * @param  array|string  $eventsToFake
+     * @return \Illuminate\Support\Testing\Fakes\EventFake
+     */
+    public static function fake($eventsToFake = [])
+    {
+        app()->singleton(Publisher::class, function (AmqpContext $context, AmqpTopic $topic) use ($eventsToFake) {
+            return new PublisherFake($context, $topic, $eventsToFake);
+        });
+    }
+
+    /**
+     * Replace the bound instance with a fake.
+     *
+     * @param  array|string  $eventsToFake
+     * @return \Illuminate\Support\Testing\Fakes\EventFake
+     */
+    public static function unfake($eventsToFake = [])
+    {
+        app()->singleton(Publisher::class, function (AmqpContext $context, AmqpTopic $topic) use ($eventsToFake) {
+            return new Publisher($context, $topic);
+        });
+    }
+
+    /**
      * Publishes payload
      *
-     * @param string $event
-     * @param array $payload
+     * @param  string  $event
+     * @param  array  $payload
      * @return Publisher
      *
      * @throws Exception
@@ -78,7 +106,7 @@ class Publisher
      *  Extract event and payload and prepare them for publishing.
      *
      * @param $event
-     * @param array $payload
+     * @param  array  $payload
      * @return array
      */
     private function extractEventAndPayload($event, array $payload)
@@ -97,7 +125,7 @@ class Publisher
     /**
      * Determine if the event handler class should be queued.
      *
-     * @param object $event
+     * @param  object  $event
      * @return bool
      * @throws \ReflectionException
      */
