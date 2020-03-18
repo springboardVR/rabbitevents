@@ -21,10 +21,6 @@ class BroadcastEvent extends Facade
     public static function fake($eventsToFake = [])
     {
         static::swap($fake = new RabbitEventFake(static::getFacadeRoot(), $eventsToFake));
-
-        Model::setEventDispatcher($fake);
-        Cache::refreshEventDispatcher();
-
         return $fake;
     }
 
@@ -43,9 +39,6 @@ class BroadcastEvent extends Facade
 
         return tap($callable(), function () use ($originalDispatcher) {
             static::swap($originalDispatcher);
-
-            Model::setEventDispatcher($originalDispatcher);
-            Cache::refreshEventDispatcher();
         });
     }
 
