@@ -36,32 +36,6 @@ class Publisher
     }
 
     /**
-     * Replace the bound instance with a fake.
-     *
-     * @param  array|string  $eventsToFake
-     * @return \Illuminate\Support\Testing\Fakes\EventFake
-     */
-    public static function fake($eventsToFake = [])
-    {
-        app()->singleton(Publisher::class, function (AmqpContext $context, AmqpTopic $topic) use ($eventsToFake) {
-            return new PublisherFake($context, $topic, $eventsToFake);
-        });
-    }
-
-    /**
-     * Replace the bound instance with a fake.
-     *
-     * @param  array|string  $eventsToFake
-     * @return \Illuminate\Support\Testing\Fakes\EventFake
-     */
-    public static function unfake($eventsToFake = [])
-    {
-        app()->singleton(Publisher::class, function (AmqpContext $context, AmqpTopic $topic) use ($eventsToFake) {
-            return new Publisher($context, $topic);
-        });
-    }
-
-    /**
      * Publishes payload
      *
      * @param  string  $event
