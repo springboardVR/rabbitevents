@@ -130,6 +130,9 @@ class PublisherFake
         };
 
         return collect($this->events[$event])->filter(function ($arguments) use ($callback) {
+            if (! is_array($arguments)) {
+                $arguments = [$arguments];
+            }
             return $callback(...$arguments);
         });
     }
